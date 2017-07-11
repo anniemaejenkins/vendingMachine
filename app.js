@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 // const bodyParser = require('body-parser');
-// mongoose.Promise = require('bluebird');
+mongoose.Promise = require('bluebird');
 
 const app = express();
 
