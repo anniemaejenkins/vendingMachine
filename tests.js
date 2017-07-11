@@ -5,6 +5,47 @@ const app = require("./app");
 const Customer = require("./models/customer");
 const Vendor = require("./models/vendor");
 
+
+describe("basic api endpoint data tests", () => {
+
+   beforeEach(done => {
+     Customer.insertMany([
+       {item: "chips", cost: 65, quantity: 3},
+       {item: "gum", cost: 100,  quantity: 2},
+       {item: "drink", cost: 125, quantity: 10}
+     ]).then(done());
+   });
+
+   afterEach(done => {
+     Customer.deleteMany({}).then(done());
+   });
+
+   it("customers api endpoint allows creation of customer lists", (done) => {
+     request(app)
+       .post("/api/customer")
+       .send({item: "candy", cost: 150, quantity: 5})
+       .expect(201)
+       .expect(res => {
+         Customer.count().then(count => {
+           expect(count).to.equal(4);
+         });
+       })
+       .end(done);
+   });
+
+   it("customers api endpoint returns all customers as json", (done) => {
+     request(app)
+       .get("/api/customer/item")
+       .expect(200)
+       .expect(res => {
+         expect(res.body[0].item).to.equal("chips");
+         expect(res.body[1].item).to.equal("gum");
+         expect(res.body[2].item).to.equal("drink");
+         expect(res.body.length).to.equal(3);
+       }).end(done);
+   });
+ });
+
 describe("basic model tests", () => {
 
   beforeEach((done) => {
