@@ -25,10 +25,10 @@ describe("basic model tests", () => {
   });
 
 it("can create a customer list in db and find it with mongoose syntax", (done) => {
-  const customer = new Customer({item: "chips", cost: .65, quantity: 1})
+  const customer = new Customer({item: "chips", cost: 65, quantity: 1})
   .save().then(newCustomer => {
     expect(newCustomer.item).to.equal("chips");
-    expect(newCustomer.cost).to.equal(.65);
+    expect(newCustomer.cost).to.equal(65);
     expect(newCustomer.quantity).to.equal(1);
   });
   done();
