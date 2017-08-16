@@ -6,7 +6,8 @@ const itemSchema = new mongoose.Schema({
   cost: Number,
   quantity: Number,
   numberOfPurchases: Number,
-  purchaseDate: [Date]
+  purchaseDate: [Date],
+  description: String
   // current items,
   // cost,
   // quanitity

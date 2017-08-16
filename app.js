@@ -46,7 +46,7 @@ app.post("/api/customer/items/:id/purchases", (req, res) => {
   Item.findById(id).then(item => {
     if(moneyGiven < item.cost){
       return res.json({message: "Not enough money"});
-    } else if( moneyGiven > item.cost){
+    } else if (moneyGiven > item.cost){
       change = moneyGiven - item.cost;
       item.purchaseDate.push(purchaseDate);
       item.quantity -= 1;
@@ -58,8 +58,19 @@ app.post("/api/customer/items/:id/purchases", (req, res) => {
       item.quantity -= 1;
       item.numberOfPurchases += 1;
       item.save();
-      res.json(item);
+      res.json({item: item, change: 0});
     }
+  });
+});
+
+app.patch("/api/vendor/items/:id", (req, res) => {
+  let id = req.params.id;
+  Item.findByIdAndUpdate(id).then(item => {
+    item.quantity = req.body.quantity;
+    item.description = req.body.description;
+    item.cost = req.body.cost;
+    item.save();
+    res.json(item);
   });
 });
 
