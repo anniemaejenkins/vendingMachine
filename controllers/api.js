@@ -1,14 +1,14 @@
-const Customer = require('../models/customer');
+const Item = require('../models/item');
 
 module.exports = {
 get: (req, res) => {
-  Customer.find({}).then((customers) => {
-    res.json(customers);
+  Item.find({}).then((items) => {
+    res.json(items);
   });
 },
 
 post:(req, res) => {
-  const newCustomer = new Customer(req.body).save().then(customer => {
+  const newItem = new Item(req.body).save().then(item => {
     res.status(201).json({});
     });
   }

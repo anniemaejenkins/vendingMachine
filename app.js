@@ -1,8 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const Customer = require('./models/customer');
-const Vendor = require('./models/vendor');
+const Item = require('./models/item');
 mongoose.Promise = require('bluebird');
 
 
@@ -15,14 +14,52 @@ app.use(bodyParser.json());
 mongoose.connect(config.mongoURL);
 
 app.get("/api/customer/item", (req, res) => {
-  Customer.find({}).then((customers) => {
-    res.json(customers);
+  Item.find({}).then((items) => {
+    res.json(items);
   });
 });
 
+app.get("/api/vendor/purchases", (req, res) => {
+  Item.find({numberOfPurchases: {$gt: 0}}).then((items) => {
+    res.json(items)
+  });
+});
+
+
 app.post("/api/customer", (req, res) => {
-  const newCustomer = new Customer(req.body).save().then(customer => {
+  const newItem = new Item(req.body).save().then(item => {
     res.status(201).json({})
+  });
+});
+
+app.post("/api/vendor/items", (req, res) => {
+  let newItem = new Item(req.body).save().then(item => {
+    res.json(item);
+  });
+});
+
+app.post("/api/customer/items/:id/purchases", (req, res) => {
+  let id = req.params.id;
+  let moneyGiven = req.body.moneyGiven;
+  let change = 0;
+  let purchaseDate = Date.now();
+  Item.findById(id).then(item => {
+    if(moneyGiven < item.cost){
+      return res.json({message: "Not enough money"});
+    } else if( moneyGiven > item.cost){
+      change = moneyGiven - item.cost;
+      item.purchaseDate.push(purchaseDate);
+      item.quantity -= 1;
+      item.numberOfPurchases += 1;
+      item.save();
+      res.json({item: item, change: change});
+    } else {
+      item.purchaseDate.push(purchaseDate);
+      item.quantity -= 1;
+      item.numberOfPurchases += 1;
+      item.save();
+      res.json(item);
+    }
   });
 });
 
